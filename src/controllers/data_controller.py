@@ -10,7 +10,9 @@ class DataController(BaseController):
     def __init__(self):
         super().__init__()
         self.size_scale = 1048576 # Convert MB to Bytes 
+        
     def validate_uploaded_file(self, file: UploadFile):
+        """Validate the file if it's wrong type or excceded size"""
         
         if file.content_type not in self.app_settings.FILE_ALLOWED_TYPES:
             return False, ResponseSignals.FILE_TYPE_NOT_SUPPORTED.value
@@ -21,11 +23,12 @@ class DataController(BaseController):
         return True, ResponseSignals.FILE_UPLOAD_SUCCESS.value
     
     def generate_unique_filename(self, orig_file_name:str, project_id: str):
+        """Generate unique filename in case someone upload the same file"""
         
-        random_key = self.generate_random_string() 
-        project_path = ProjectController().get_project_path(project_id)
+        random_key = self.generate_random_string() # Any random string "the function on base controller"
+        project_path = ProjectController().get_project_path(project_id) # it's based project so project controller and for unique file we give it project_Id
         
-        cleaned_file_name = self.get_clean_file_name(orig_file_name=orig_file_name)
+        cleaned_file_name = self.get_clean_file_name(orig_file_name=orig_file_name) # just clean it 
         
         new_file_path = os.path.join(
             project_path, 
