@@ -2,10 +2,11 @@ from fastapi import FastAPI, APIRouter, Depends, UploadFile, status
 from fastapi.responses import JSONResponse
 import os
 from helpers.config import get_settings, Settings
-from controllers import DataController, ProjectController
+from controllers import DataController, ProjectController, ProcessController
 import aiofiles
 from models import ResponseSignals
 import logging 
+from .shcemes.data import ProcessRequest
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -32,7 +33,7 @@ async def upload_data(project_id: str, file: UploadFile,
         )
         
     project_dir_path =  ProjectController().get_project_path(project_id=project_id)
-    file_path  = data_controller.generate_unique_filename(
+    file_path, file_id  = data_controller.generate_unique_filepath(
         orig_file_name=file.filename,
         project_id=project_id
     )
@@ -53,6 +54,36 @@ async def upload_data(project_id: str, file: UploadFile,
         
     return JSONResponse(
         content={
-            "signal": ResponseSignals.FILE_UPLOAD_SUCCESS.value
+            "signal": ResponseSignals.FILE_UPLOAD_SUCCESS.value,
+            "file_id" : file_id
         }
     )
+    
+@data_router.post("/process/{project_id}")
+async def process_endpoint(project_id: str, process_request: ProcessRequest ):
+    
+    file_id = process_request.file_id
+    chunk_size = process_request.chunk_size
+    overlap_size = process_request.overlap_size
+    
+    
+    process_controller = ProcessController(project_id=project_id) # here the prcoess main functions 
+    
+    file_content = process_controller.get_file_content(file_id=file_id) # get fild_id return loaded data with text & metadata
+    
+    file_chunks = process_controller.process_file_content(  # Recrusve_chunker give the (txt + metadata) - chunk_size - overlap and chunk
+        file_content=file_content,
+        chunk_size= chunk_size,
+        overlap_size=overlap_size
+    )
+    
+    if file_chunks is None or len(file_chunks) == 0:            # is everything ok?
+        return JSONResponse(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            content={
+                "signal" : ResponseSignals.PROCESSING_FAILED.value
+            }
+        )
+    
+    return file_chunks
+        
