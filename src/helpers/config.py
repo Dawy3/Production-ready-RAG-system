@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     
     FILE_DEFAULT_CHUNK_SIZE: int
     model_config = SettingsConfigDict(env_file=".env")
+    
+    MONGODB_URL: str
+    MONGODB_DB: str
         
 def get_settings():
     return Settings()
