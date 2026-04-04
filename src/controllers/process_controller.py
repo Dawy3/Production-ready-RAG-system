@@ -40,6 +40,9 @@ class ProcessController(BaseController):
         
     def get_file_content(self, file_id:str):
         loader = self.get_file_loader(file_id=file_id)
+        if loader is None:
+            return []
+
         return loader.load()
     
     def process_file_content(self, file_content: list,
