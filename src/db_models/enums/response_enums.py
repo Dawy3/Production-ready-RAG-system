@@ -1,3 +1,7 @@
+"""
+Rather than hard writing every json output message in endpoint. just make enums file (help management and more efficiency way)
+"""
+
 from enum import Enum
 
 class ResponseSignals(Enum):

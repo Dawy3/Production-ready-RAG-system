@@ -1,3 +1,6 @@
+"""
+Create project dir based on project id , Each project have it's own folder: EX ./assets/files/{project_id} 
+"""
 from .base_controller import BaseController
 import os 
 

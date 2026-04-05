@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import base, data
+from routes import base_router, data_router
 from motor.motor_asyncio import AsyncIOMotorClient
 from helpers.config import get_settings
 
@@ -17,5 +17,5 @@ async def shutdown_db_client():
     app.mongo_conn.close()
     
 
-app.include_router(base.base_router) # it's route base that check out if the server is working or not 
-app.include_router(data.data_router)
+app.include_router(base_router.base_router) # it's route base that check out if the server is working or not 
+app.include_router(data_router.data_router)
