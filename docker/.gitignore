@@ -1,3 +1,4 @@
 monogodb
 ./monogodb
 /monogodb
+.env
