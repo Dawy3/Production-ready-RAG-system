@@ -1,3 +1,7 @@
+"""
+The file define the file extension for the document_loader then load the content cut it to "chunks" with metadata 
+"""
+
 from .base_controller import BaseController
 from .project_controller import ProjectController
 import os

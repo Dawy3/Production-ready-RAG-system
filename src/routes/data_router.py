@@ -81,7 +81,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     
     
     # connection with DB client
-    project_model= ProjectModel(        
+    project_model= await ProjectModel.create_instance(        
         db_client= request.app.db_client        # Connection with url and specifiy DB'mini-rag' name : return Collection!
     )
     # Inside the MongoDB find it or create one => It's operation
@@ -117,7 +117,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     ]
     
      
-    chunk_model = ChunkModel(
+    chunk_model = await ChunkModel.create_instance(
         db_client = request.app.db_client
     )
     

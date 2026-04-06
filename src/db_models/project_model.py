@@ -7,8 +7,6 @@ and fetching projects with pagination using skip() and limit().
 Uses ProjectSchemes for data validation and async MongoDB operations.
 """
 
-
-
 from .base_data_model import BaseDataModel
 from .db_schemes import ProjectSchemes
 from .enums.DB_enums import DataBaseEnum
@@ -19,6 +17,33 @@ class ProjectModel(BaseDataModel):
     def __init__(self, db_client: object):
         super().__init__(db_client)
         self.collection = self.db_client[DataBaseEnum.COLLECTION_PROJECT_NAME.value] # Projects
+        
+    @classmethod
+    async def create_instance(cls, db_client: object):
+        """
+        we need once calling ProjectModel init_connection run but we can't do it with __init__ because await!
+        To solve this problem make a static class that call both of them!
+        """
+        instance = cls(db_client)   # After the ProjectModel class take 'db_client' will automatically call __init__ function
+        await instance.init_connection() # run Init connection function to initilize Monogo connection and create indexes 
+        return instance 
+        
+    
+    async def init_connection(self):
+        """Create collection if doesn't exist and indexes """
+        
+        all_collections = await self.db_client.list_collection_names()
+        
+        if DataBaseEnum.COLLECTION_PROJECT_NAME.value not in all_collections:
+            self.collection = self.db_client[DataBaseEnum.COLLECTION_PROJECT_NAME.value]
+            indexes = ProjectSchemes.get_indexes()
+            for index in indexes:
+                await self.collection.create_index(
+                    index["key"],
+                    name = index["name"],
+                    unique = index["unique"]
+                )
+        
         
     
     async def create_proejct(self, project: ProjectSchemes):

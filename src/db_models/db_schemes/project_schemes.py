@@ -19,3 +19,17 @@ class ProjectSchemes(BaseModel):
 
     model_config = {"arbitrary_types_allowed": True}                 # It's ok using types "Pydantic" don't understand (ObjectID)
     
+    
+    @classmethod
+    def get_indexes(cls):
+        """indexing is a way to make data retrieval fast and efficient by creating special data structures (indexes)
+        that help MongoDB locate documents without scanning the entire collection."""
+        return [
+            {
+                "key" : [
+                    ("project_id", 1)                   # Indexing by key project_id with ascending order (a-z)
+                ],
+                "name" : "project_id_index_1",           # Name of the index 
+                "unique": True
+            }
+        ]
