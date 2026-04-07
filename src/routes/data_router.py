@@ -7,10 +7,13 @@ from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 from controllers import DataController,  ProcessController
 from db_models.project_model import ProjectModel
-from db_models.db_schemes import DataChunkSchemes
+from db_models.db_schemes import DataChunkSchemes, AssetSchemes
 from db_models.chunk_model import ChunkModel
+from db_models.asset_model import AssetModel
 from db_models import ResponseSignals
 from .shcemes.data_schema import ProcessRequestSchemes
+from db_models.enums.asset_type_enums import AssetTypeEnums
+import os
 import logging 
 import aiofiles         # Read/Write files using async/await
 
@@ -26,6 +29,13 @@ data_router = APIRouter(
 @data_router.post("/upload/{project_id}")
 async def upload_data(request: Request, project_id: str, file: UploadFile,
                       app_settings: Settings = Depends(get_settings)):
+    
+    # connection with DB client
+    project_model= await ProjectModel.create_instance(        
+        db_client= request.app.db_client        # Connection with url and specifiy DB'mini-rag' name : return Collection!
+    )
+    # Inside the MongoDB find it or create one => It's operation
+    project = await project_model.get_project_or_create_one(project_id=project_id)  
     
     # Validate, create unique path and clear name if it had ambigous name EX: @assets$$$$..
     data_controller = DataController()
@@ -61,11 +71,25 @@ async def upload_data(request: Request, project_id: str, file: UploadFile,
             content={
                 "signal": ResponseSignals.FILE_UPLOAD_FAILED.value
             })
+    
+    # Store the assets into the database
+    asset_model = await AssetModel.create_instance(db_client=request.app.db_client)
+    
+    asset_resource = AssetSchemes(
+        asset_project_id= project.id,  
+        asset_type= AssetTypeEnums.FILE.value,
+        asset_name = file_id,
+        asset_size = os.path.getsize(file_path)
+    )
         
+    asset_record = await asset_model.create_asset(asset= asset_resource)
+    
+    
+    
     return JSONResponse(
         content={
             "signal": ResponseSignals.FILE_UPLOAD_SUCCESS.value,
-            "file_id" : file_id
+            "file_id" : str(asset_record.id),
         }
     )
     
@@ -132,3 +156,4 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             "inserted_chunks": num_records,
         }
     )
+    
