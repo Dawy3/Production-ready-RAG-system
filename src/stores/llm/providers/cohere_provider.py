@@ -2,6 +2,10 @@ from stores.llm.llm_interface import LLMInterface
 from stores.llm.llm_enums import CohereEnums, DocumentTypeEnum
 import cohere
 import logging
+
+
+
+
 class CohereProvider(LLMInterface):
     
     def __init__(self, api_key: str,

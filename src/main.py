@@ -9,9 +9,11 @@ app = FastAPI()
 async def startup_db_client():
     settings = get_settings()
     
+    # DB Client
     app.mongo_conn = AsyncIOMotorClient(settings.MONGODB_URL)
     app.db_client = app.mongo_conn[settings.MONGODB_DB]
     
+    # LLM Factory
     llm_provider_factor = LLMProviderFactor(settings)
     
     # Generation client

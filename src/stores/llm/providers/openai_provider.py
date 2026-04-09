@@ -2,6 +2,10 @@ from stores.llm.llm_interface import LLMInterface
 from stores.llm.llm_enums import OpenAIEnums
 from openai import OpenAI
 import logging
+
+
+
+
 class OpenAIProvider(LLMInterface):
     
     def __init__(self, api_key: str, base_url: str=None,
@@ -16,7 +20,7 @@ class OpenAIProvider(LLMInterface):
         self.defalt_input_max_char = default_input_max_char 
         self.default_generation_max_output_tokens = default_generation_max_output_tokens 
         
-        # We could change it in RunTime so it's better to assign with none in case we need to use different generation/embedding model and client
+        # We could change it in RunTime so it's better to assign with None in case we need to use different generation/embedding model and client
         self.generation_model_id = None
         
         self.embedding_model_id = None
