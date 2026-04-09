@@ -10,10 +10,27 @@ class Settings(BaseSettings):
     FILE_MAX_SIZE: int
     
     FILE_DEFAULT_CHUNK_SIZE: int
-    model_config = SettingsConfigDict(env_file=".env")
     
     MONGODB_URL: str
     MONGODB_DB: str
+    
+    GENERATION_BACKEND : str
+    EMBEDDING_BACKEND : str
+
+    OPENAI_API_KEY: str = None
+    OPENAI_BASE_URL: str = None
+    COHERE_API_KEY: str = None
+
+
+    GENERATION_MODEL_ID: str = None
+    EMBEDDING_MODEL_ID: str = None
+    EMBEDDING_MODEL_SIZE: int = None
+
+    INPUT_DEFAULT_MAX_CHARACTERS: int = None
+    GENERATION_DEFAULT_MAX_TOKENS: int = None
+    GENERATION_DEFAULT_TEMPERATURE: float = None
         
+    model_config = SettingsConfigDict(env_file=".env")
+    
 def get_settings():
     return Settings()
