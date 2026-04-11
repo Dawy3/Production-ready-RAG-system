@@ -1,5 +1,12 @@
 from enum import Enum
 
 class VectordbEnums(Enum):
-    QDRANT= "QDRANT"
+    QDRANT = "QDRANT"
+    
+
+class DistanceMethodEnums(Enum):
+    COSINE  =  "cosine"
+    DOT =  "dot"
+    
+    
     
