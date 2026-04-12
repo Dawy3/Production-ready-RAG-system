@@ -1,7 +1,6 @@
 from .providers import QdrantDB
 from .vectorDB_enums import VectordbEnums
-from src.controllers.base_controller import BaseController
-
+from controllers.base_controller import BaseController
 
 class VectorDBFactory:
     def __init__(self, config):

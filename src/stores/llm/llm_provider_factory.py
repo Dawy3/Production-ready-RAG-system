@@ -1,5 +1,5 @@
 from stores.llm.llm_enums import LLMEnums
-from llm.providers import OpenAIProvider, CohereProvider
+from .providers import OpenAIProvider, CohereProvider
 
 
 
@@ -12,7 +12,7 @@ class LLMProviderFactor:
         if provider == LLMEnums.OPENAI.value:
             return OpenAIProvider(
                 api_key=self.config.OPENAI_API_KEY,
-                base_url=self.config.OPENAI_BASE_URL,
+                base_url=self.config.OPENAI_BASE_URL if self.config.OPENAI_BASE_URL else None,
                 default_input_max_char=self.config.INPUT_DEFAULT_MAX_CHARACTERS,
                 default_generation_max_output_tokens=self.config.GENERATION_DEFAULT_MAX_TOKENS,
                 default_temp=self.config.GENERATION_DEFAULT_TEMPERATURE
