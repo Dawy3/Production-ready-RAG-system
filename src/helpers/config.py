@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     MONGODB_DB: str
     
+    # ================================= LLM Config ================================
     GENERATION_BACKEND : str
     EMBEDDING_BACKEND : str
 
@@ -34,6 +35,10 @@ class Settings(BaseSettings):
     VECTOR_DB_BACKEND: str 
     VECTOR_DB_PATH: str 
     VECTOR_DB_DISTANCE_METHOD: str = None
+    # ================================= Template Configs ================================
+    PRIMARY_LANG: str
+    DEFAULT_LANG: str 
+
         
     model_config = SettingsConfigDict(env_file=".env")
     

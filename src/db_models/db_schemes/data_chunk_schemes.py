@@ -25,3 +25,11 @@ class DataChunkSchemes(BaseModel):
                 "unique" : False                # Maybe there are chunks have the same value of chunk_project_id
             }
         ]
+        
+        
+class RetrievedDocument(BaseModel):
+    text: str
+    score: float
+    
+    
+    
