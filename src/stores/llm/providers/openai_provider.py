@@ -27,10 +27,9 @@ class OpenAIProvider(LLMInterface):
         self.embedding_model_id = None
         self.embedding_size = None
 
-        # Create an httpx client that ignores environment proxy settings
-        # and pass it to OpenAI to avoid passing unsupported `proxies` kw.
         http_client = httpx.Client(trust_env=False)
 
+        self.enums = OpenAIEnums
         self.client = OpenAI(
             api_key= self.api_key,
             base_url= self.base_url,
