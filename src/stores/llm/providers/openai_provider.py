@@ -32,7 +32,7 @@ class OpenAIProvider(LLMInterface):
         self.enums = OpenAIEnums
         self.client = OpenAI(
             api_key= self.api_key,
-            base_url= self.base_url,
+            base_url= self.base_url if self.base_url and len(self.base_url) else None,
             http_client=http_client
         )
         
