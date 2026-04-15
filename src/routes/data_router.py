@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 from controllers import DataController,  ProcessController
 from db_models.project_model import ProjectModel
-from db_models.db_schemes import DataChunkSchemes, AssetSchemes
+from db_models.db_schemes import DataChunk, Asset
 from db_models.chunk_model import ChunkModel
 from db_models.asset_model import AssetModel
 from db_models import ResponseSignals
@@ -27,7 +27,7 @@ data_router = APIRouter(
 ) 
 
 @data_router.post("/upload/{project_id}")
-async def upload_data(request: Request, project_id: str, file: UploadFile,
+async def upload_data(request: Request, project_id: int, file: UploadFile,
                       app_settings: Settings = Depends(get_settings)):
     
     # connection with DB client
@@ -75,8 +75,8 @@ async def upload_data(request: Request, project_id: str, file: UploadFile,
     # Store the assets into the database
     asset_model = await AssetModel.create_instance(db_client=request.app.db_client)
     
-    asset_resource = AssetSchemes(
-        asset_project_id= project.id,  
+    asset_resource = Asset(
+        asset_project_id= project_id,  
         asset_type= AssetTypeEnums.FILE.value,
         asset_name = file_id,
         asset_size = os.path.getsize(file_path)
@@ -89,14 +89,14 @@ async def upload_data(request: Request, project_id: str, file: UploadFile,
     return JSONResponse(
         content={
             "signal": ResponseSignals.FILE_UPLOAD_SUCCESS.value,
-            "file_id" : str(asset_record.id),
+            "file_id" : str(asset_record.asset_id),
         }
     )
     
     
 #________________Processing______________
 @data_router.post("/process/{project_id}")
-async def process_endpoint(request: Request, project_id: str, process_request: ProcessRequestSchemes ):
+async def process_endpoint(request: Request, project_id: int, process_request: ProcessRequestSchemes ):
     
     chunk_size = process_request.chunk_size
     overlap_size = process_request.overlap_size
@@ -119,7 +119,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     
     if process_request.file_id:
         asset_record = await asset_model.get_asset_record(
-            asset_project_id=project.id,
+            asset_project_id=project_id,
             asset_name= process_request.file_id
            )
         if  asset_record == None:
@@ -130,17 +130,17 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             }
         )  
         project_files_ids = {
-            asset_record.id: asset_record.asset_name
+            asset_record.asset_id: asset_record.asset_name
         }
             
     else:
         
         project_files = await asset_model.get_all_project_assets(       # Get all project_id 
-            asset_project_id=project.id,
+            asset_project_id=project_id,
             asset_type=AssetTypeEnums.FILE.value,
         )
         project_files_ids = {                                           # from project_ids get list of all asset_name (files_name)
-            record.id: record.asset_name
+            record.asset_project_id: record.asset_name
             for record in project_files
         }
         
@@ -164,7 +164,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
     )
     
     if do_reset == 1:
-        _ = await chunk_model.delete_chunks_by_project_id(project_id=project.id)
+        _ = await chunk_model.delete_chunks_by_project_id(project_id=project_id)
         
     for asset_id, file_id in project_files_ids.items():                                   # Run a loop for each file_id in dictionary .items()
         
@@ -189,11 +189,11 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
             )
         
         file_chunks_record = [
-            DataChunkSchemes(
+            DataChunk(
                 chunk_text=chunk.page_content,
                 chunk_metadata= chunk.metadata,
                 chunk_order= i+1,
-                chunk_project_id= project.id,
+                chunk_project_id= project_id,
                 chunk_asset_id=asset_id
             )
             for i, chunk in enumerate(file_chunks)

@@ -1,96 +1,64 @@
-"""
-Handles project-related database operations.
-
-Supports creating projects, retrieving or creating a project by ID,
-and fetching projects with pagination using skip() and limit().
-
-Uses ProjectSchemes for data validation and async MongoDB operations.
-"""
-
 from .base_data_model import BaseDataModel
-from .db_schemes import ProjectSchemes
+from .db_schemes import Project
 from .enums.DB_enums import DataBaseEnum
-
+from sqlalchemy.future import select
+from sqlalchemy import func
 
 class ProjectModel(BaseDataModel):
     
     def __init__(self, db_client: object):
         super().__init__(db_client)
-        self.collection = self.db_client[DataBaseEnum.COLLECTION_PROJECT_NAME.value] # Projects
-        
+        self.db_client = db_client
+                
     @classmethod
     async def create_instance(cls, db_client: object):
-        """
-        we need once calling ProjectModel init_connection run but we can't do it with __init__ because await!
-        To solve this problem make a static class that call both of them!
-        """
         instance = cls(db_client)   # After the ProjectModel class take 'db_client' will automatically call __init__ function
-        await instance.init_connection() # run Init connection function to initilize Monogo connection and create indexes 
         return instance 
-        
     
-    async def init_connection(self):
-        """Create collection if doesn't exist and indexes """
-        
-        all_collections = await self.db_client.list_collection_names()
-        
-        if DataBaseEnum.COLLECTION_PROJECT_NAME.value not in all_collections:
-            self.collection = self.db_client[DataBaseEnum.COLLECTION_PROJECT_NAME.value]
-            indexes = ProjectSchemes.get_indexes()
-            for index in indexes:
-                await self.collection.create_index(
-                    index["key"],
-                    name = index["name"],
-                    unique = index["unique"]
-                )
-        
-        
     
-    async def create_proejct(self, project: ProjectSchemes):
-        result = await self.collection.insert_one(project.dict(by_alias=True, exclude_unset=True))
-        project.id = result.inserted_id
-        
+    async def create_proejct(self, project: Project):
+        async with self.db_client() as session:
+            async with session.begin():
+                session.add(project)
+            await session.commit()
+            await session.refresh(project)
+            
         return project
     
     async def get_project_or_create_one(self, project_id: str):
-        
-        record = await self.collection.find_one({
-            "project_id" : project_id 
-        })
-        if not record:
-            # Create new project
-            project = ProjectSchemes(project_id=project_id)         # Check project id 
-            project = await self.create_proejct(project=project)    # then create one 
-        
-            return project
-        
-        return ProjectSchemes(**record) # give every value on record to check
+        async with self.db_client() as session:
+            async with session.begin():
+                query = select(Project).where(Project.project_id == project_id)
+                project = query.scalar_one_or_none()
+                if project is None:
+                    project_rec = Project(
+                        project_id=project_id
+                    )
+                    
+                    project = self.create_proejct(project=project_rec)
+                    return project
+                else:
+                    return project
     
     async def get_all_projects(self, page: int=1, page_size: int=10):
-        """
-        Fetch all projects from the database but not all at once. A list of projects for the current page & Total number of pages
-        """
         
-        # Count total number of documents
-        total_documents = await self.collection.count_documents({}) # {} means no filter, so it counts everything in the collection
-        
-        # Calculate total number of pages
-        total_pages = total_documents // page_size      # How mange pages   
-        if total_documents % page_size > 0:             # if it exceed page_size then add one more page
-            total_pages += 1
+        async with self.db_client() as session:
+            async with session.begin():
+                
+                total_documents = await session.execute(select(
+                  func.count(Project.project_id)  
+                ))
+                
+                total_documents = total_documents.scalar_one()
+                
+                total_pages = total_documents // page_size
+                
+                if total_documents % page_size> 0 :
+                    total_pages +=1
+                    
+                
+                query = select(Project).offset((page-1) * page_size).limit(page_size)
+                projects = await session.execute(query).scalars().all()
+                
+                return projects, total_pages
             
-        cursor = self.collection.find().skip((page-1) * page_size ).limit(page_size) # skip the previous pages, then take only this page
-        projects = []
-        async for document in cursor:
-            projects.append(
-                ProjectSchemes(**document)
-            )
-            
-        return projects , total_pages   # a list of project for the current page - Total number of pages
-            
-        
-    
-    
-    
-        
-    

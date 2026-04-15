@@ -1,5 +1,5 @@
 from .base_controller import BaseController
-from db_models.db_schemes import ProjectSchemes, DataChunkSchemes
+from db_models.db_schemes import Project, DataChunk
 from stores.llm.llm_enums import DocumentTypeEnum
 from typing import List
 import json
@@ -18,11 +18,11 @@ class NLPController(BaseController):
     def create_collection_name(self, projecet_id: str):
         return f"collection_{projecet_id}".strip()
     
-    def reset_vector_db_collection(self, project: ProjectSchemes):
+    def reset_vector_db_collection(self, project: Project):
         collection_name = self.create_collection_name(projecet_id= project.project_id)
         return self.vectordb_client.delete_collection(collection_name)
     
-    def get_vector_db_collection_info(self, project: ProjectSchemes):
+    def get_vector_db_collection_info(self, project: Project):
         collection_name = self.create_collection_name(projecet_id= project.project_id)
         collection_info =  self.vectordb_client.get_collection_info(collection_name)
         
@@ -30,7 +30,7 @@ class NLPController(BaseController):
             json.dumps(collection_info, default= lambda x: x.__dict__)  # Turn Collection info to string -> convert  the objects into dict type
         )
     
-    def index_into_vector_db(self, project: ProjectSchemes, chunks: List[DataChunkSchemes],
+    def index_into_vector_db(self, project: Project, chunks: List[DataChunk],
                              chunks_ids: List[int], do_reset: bool=False):
         # Step1: get collection name
         collection_name = self.create_collection_name(projecet_id=project.project_id)
@@ -62,7 +62,7 @@ class NLPController(BaseController):
         
         return True
     
-    def search_vector_db_collection(self, project: ProjectSchemes, text: str, limit: int=10):
+    def search_vector_db_collection(self, project: Project, text: str, limit: int=10):
         
         # step1 : get collection name
         collection_name = self.create_collection_name(projecet_id=project.project_id)
@@ -85,7 +85,7 @@ class NLPController(BaseController):
         
         return results
         
-    def answer_rag_question(self, project: ProjectSchemes, query: str, limit: int=10):
+    def answer_rag_question(self, project: Project, query: str, limit: int=10):
         
         answer, full_prompt, chat_history = None, None, None
         
