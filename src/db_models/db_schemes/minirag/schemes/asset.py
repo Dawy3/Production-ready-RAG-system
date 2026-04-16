@@ -24,7 +24,7 @@ class Asset(SQLAlchemyBase):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
     
     project = relationship("Project", back_populates="assets")  # I will take data from Project schema and pass it to assets table(asset_project_id)
-    
+    chunks = relationship("DataChunk", back_populates="asset")  
     
     __table_args__= (
         Index('ix_asset_project_id', asset_project_id),                 # Create index for asset_project_id for fast retrieval 
