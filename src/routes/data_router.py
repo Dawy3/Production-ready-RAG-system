@@ -140,7 +140,7 @@ async def process_endpoint(request: Request, project_id: int, process_request: P
             asset_type=AssetTypeEnums.FILE.value,
         )
         project_files_ids = {                                           # from project_ids get list of all asset_name (files_name)
-            record.asset_project_id: record.asset_name
+            record.asset_id: record.asset_name
             for record in project_files
         }
         
