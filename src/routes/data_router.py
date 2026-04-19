@@ -107,10 +107,8 @@ async def process_endpoint(request: Request, project_id: int, process_request: P
     project_model= await ProjectModel.create_instance(        
         db_client= request.app.db_client        # Connection with url and specifiy DB'mini-rag' name : return Collection!
     )
-    # Inside the MongoDB find it or create one => It's operation
     project = await project_model.get_project_or_create_one(project_id=project_id)  
     
-    # Connect to MongoDB
     asset_model = await AssetModel.create_instance(                                 
         db_client= request.app.db_client
     )
@@ -152,7 +150,6 @@ async def process_endpoint(request: Request, project_id: int, process_request: P
             }
         )
         
-    
     process_controller = ProcessController(project_id=project_id)       # here the prcoess main functions 
     
     
@@ -199,10 +196,6 @@ async def process_endpoint(request: Request, project_id: int, process_request: P
             for i, chunk in enumerate(file_chunks)
         ]
         
-        
-        
-        
-            
         num_records += await chunk_model.insert_many_chunks(chunks= file_chunks_record)
         num_files += 1
 
