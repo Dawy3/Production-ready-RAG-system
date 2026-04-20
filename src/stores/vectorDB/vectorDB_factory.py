@@ -8,6 +8,7 @@ class VectorDBFactory:
         self.config = config
         self.base_controller = BaseController() 
         self.db_client = db_client
+        
     def create(self, provider: str):
         
         if provider == VectordbEnums.QDRANT.value:
