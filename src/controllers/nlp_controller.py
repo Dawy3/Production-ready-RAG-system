@@ -15,15 +15,16 @@ class NLPController(BaseController):
         self.template_parser = template_parser
         
     
-    def create_collection_name(self, projecet_id: str):
-        return f"collection_{projecet_id}".strip()
+    def create_collection_name(self, project_id: str):
+        size = getattr(self.vectordb_client, "default_vector_size", None) or getattr(self.embedding_client, "embedding_size", None)
+        return f"collection_{size}_{project_id}".strip()
     
     async def reset_vector_db_collection(self, project: Project):
-        collection_name = self.create_collection_name(projecet_id= project.project_id)
+        collection_name = self.create_collection_name(project_id= project.project_id)
         return await self.vectordb_client.delete_collection(collection_name)
     
     async def get_vector_db_collection_info(self, project: Project):
-        collection_name = self.create_collection_name(projecet_id= project.project_id)
+        collection_name = self.create_collection_name(project_id= project.project_id)
         collection_info =  await self.vectordb_client.get_collection_info(collection_name)
         
         return json.loads(  # Turn it to json
@@ -33,7 +34,7 @@ class NLPController(BaseController):
     async def index_into_vector_db(self, project: Project, chunks: List[DataChunk],
                              chunks_ids: List[int], do_reset: bool=False):
         # Step1: get collection name
-        collection_name = self.create_collection_name(projecet_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.project_id)
         
         # Step2: Mange Items
         texts = [ c.chunk_text for c in chunks]
@@ -63,7 +64,7 @@ class NLPController(BaseController):
         
         # step1 : get collection name
         query_vector = None
-        collection_name = self.create_collection_name(projecet_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.project_id)
         
         # step2 : get text embedding vector
         vectors = self.embedding_client.embed_text(text, DocumentTypeEnum.QUERY.value)
