@@ -76,8 +76,14 @@ class PGVectorProvider(VectorDBInterface):
                     return None
                 
                 return {
-                    "table_info" : dict(table_data),
-                    "record_count" : record_count
+                    "table_info" : {
+                        "schemaname": table_data[0],
+                        "tablename": table_data[1],
+                        "tableowner": table_data[2],
+                        "tablespace": table_data[3],
+                        "hasindexes": table_data[4],
+                    },
+                    "record_count" : record_count.scalar_one(),
                 }
                 
     async def delete_collection(self, collection_name: str):
@@ -180,7 +186,7 @@ class PGVectorProvider(VectorDBInterface):
     async def insert_one(self, collection_name: str, text: str, vector: list,
                         metadata: dict=None, record_id: str=None):
         
-        is_collection_existed = self.is_collection_existed(collection_name)
+        is_collection_existed = await self.is_collection_existed(collection_name)
         if not is_collection_existed:
             self.logger.error(f"Can not insert new record to non-existed collection {collection_name}")
             return False
@@ -211,7 +217,7 @@ class PGVectorProvider(VectorDBInterface):
     async def insert_many(self, collection_name: str, texts: list, vectors: list,
                     metadata: list = None, record_ids: list=None, batch_size: int=50):
         
-        is_collection_existed = self.is_collection_existed(collection_name)
+        is_collection_existed = await self.is_collection_existed(collection_name)
         if not is_collection_existed:
             self.logger.error(f"Can not insert new record to non-existed collection {collection_name}")
             return False
@@ -258,7 +264,7 @@ class PGVectorProvider(VectorDBInterface):
     
     async def search_by_vector(self, collection_name: str, vector: list, limit: int):
         
-        is_collection_existed = self.is_collection_existed(collection_name)
+        is_collection_existed = await self.is_collection_existed(collection_name)
         if not is_collection_existed:
             self.logger.error(f"Can not insert new record to non-existed collection {collection_name}")
             return False
