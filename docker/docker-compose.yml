@@ -11,8 +11,18 @@ services:
       - "5432:5432"
     volumes:
       - 'pgvector:/var/lib/postgresql/data'
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
+    env_file:
+      - ./env/.env.postgres
+    networks:
+      - backend
+    restart: always
+    healthcheck:
+      test: ["executable", "arg"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
 
   # Qdrant (vectorDB)
 
