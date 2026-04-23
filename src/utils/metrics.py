@@ -23,17 +23,17 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         REQUEST_LATENCY.labels(method=request.method, endpoint= endpoint).observe(duration)
         
         return response 
+
+
+def setup_metrics(app: FastAPI):
+    """
+    Setup Prometheus metrics middleware and endpoint
+    """
+    # Add Prometheus middleware
+    app.add_middleware(PrometheusMiddleware)
     
-    def setup_metrics(app: FastAPI):
-        """
-        Setup Prometheus metrics middleware and endpoint
-        """
-        # Add Prometheus middleware
-        app.add_middleware(PrometheusMiddleware)
-        
-        @app.get("/TheNchy135_Dawy_Test_Metrics", include_in_schema=False)
-        def metrics():
-            return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
-        
+    @app.get("/TheNchy135_Dawy_Test_Metrics", include_in_schema=False)
+    def metrics():
+        return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
         
         
