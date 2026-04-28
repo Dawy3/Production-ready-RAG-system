@@ -26,5 +26,19 @@ jobs:
             sudo systemctl restart minirag.service
             echo "Waiting..."
             sleep 20
-            sudo systemctl status minirag.service
+            
+            for i in {1..6}; do
+              if ss -tuln | grep -q ":80"; then
+                echo "Port 80 is now Active :)"
+                break
+              else
+                echo "Waiting for server to start... ($i/6)"
+                sleep 5
+              fi
+            done
+
+            if ! ss -tuln | grep -q ":80"; then
+              echo "Error: Server failed to start on port 80 :("
+              exit 1
+            fi
           
