@@ -4,7 +4,7 @@ Files that controll data Uploading like(Validation, Unique path, clear name if i
 
 from .base_controller import BaseController
 from fastapi import UploadFile
-from db_models import ResponseSignals
+from models import ResponseSignals
 from .project_controller import ProjectController
 import os
 import re

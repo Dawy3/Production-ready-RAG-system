@@ -1,5 +1,5 @@
 from .base_controller import BaseController
-from db_models.db_schemes import Project, DataChunk
+from models.db_schemes import Project, DataChunk
 from stores.llm.llm_enums import DocumentTypeEnum
 from typing import List
 import json
