@@ -1,14 +1,11 @@
-"""
-The file define the file extension for the document_loader then load the content cut it to "chunks" with metadata 
-"""
-
 from .base_controller import BaseController
 from .project_controller import ProjectController
 import os
 from langchain_community.document_loaders import TextLoader, PyMuPDFLoader
-from db_models import ProcessingEnums
+from models import ProcessingEnums
 from typing import List
 from dataclasses import dataclass
+from utils.pdf_loader import pdf_loader
 
 @dataclass
 class Document:
@@ -43,7 +40,7 @@ class ProcessController(BaseController):
             return TextLoader(file_path, encoding="utf-8")
         
         if file_ext == ProcessingEnums.PDF.value:
-            return PyMuPDFLoader(file_path)
+            return pdf_loader(file_path=file_path)
         
         return None
         

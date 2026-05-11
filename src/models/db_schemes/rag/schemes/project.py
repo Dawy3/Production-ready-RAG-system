@@ -1,4 +1,4 @@
-from .minirag_base import SQLAlchemyBase
+from .rag_base import SQLAlchemyBase
 from sqlalchemy import Column, Integer, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -16,7 +16,3 @@ class Project(SQLAlchemyBase):
     
     chunks = relationship("DataChunk", back_populates="project")
     assets = relationship("Asset", back_populates="project")
-    
-    
-    
-    
