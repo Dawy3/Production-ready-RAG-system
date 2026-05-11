@@ -6,13 +6,13 @@ from fastapi import  APIRouter, Depends, UploadFile, status, Request
 from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 from controllers import DataController,  ProcessController
-from db_models.project_model import ProjectModel
-from db_models.db_schemes import DataChunk, Asset
-from db_models.chunk_model import ChunkModel
-from db_models.asset_model import AssetModel
-from db_models import ResponseSignals
+from models.project_model import ProjectModel
+from models.db_schemes import DataChunk, Asset
+from models.chunk_model import ChunkModel
+from models.asset_model import AssetModel
+from models import ResponseSignals
 from .shcemes.data_schema import ProcessRequestSchemes
-from db_models.enums.asset_type_enums import AssetTypeEnums
+from models.enums.asset_type_enums import AssetTypeEnums
 import os
 import logging 
 import aiofiles         # Read/Write files using async/await
