@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status, Request
 from fastapi.responses import JSONResponse
 from .shcemes.nlp_schema import PushRequestSchema, SearchRequestSchema
-from db_models.project_model import ProjectModel
-from db_models.chunk_model import ChunkModel
-from db_models import ResponseSignals
+from models.project_model import ProjectModel
+from models.chunk_model import ChunkModel
+from models import ResponseSignals
 from controllers import NLPController
 from tqdm.auto import tqdm
 
