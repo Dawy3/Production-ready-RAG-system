@@ -5,7 +5,7 @@
 
 ##  Overview
 
-This system ingests PDF and text documents and exposes a conversational Q&A API. 
+This system ingests PDF, text, and image documents (images are processed with OCR) and exposes a conversational Q&A API. 
 
 ---
 
@@ -16,6 +16,7 @@ This system ingests PDF and text documents and exposes a conversational Q&A API.
 | **Multi-LLM Support** | OpenAI GPT + Cohere + LLama — switchable via environment config |
 | **Dual Vector DB** | Qdrant (local/embedded) or PgVector (PostgreSQL) — provider-agnostic interface |
 | **Bilingual** | Prompt templates in English 🇬🇧 and Arabic 🇸🇦 with auto language detection |
+| **OCR Support** | Image ingestion with OCR (Tesseract locally or AWS Textract in cloud deployments) to extract text from PNG/JPG/TIFF |
 | **Production Observability** | Prometheus metrics + Grafana dashboards for request counts, latency, DB stats |
 | **AWS Deployment** | CI/CD via GitHub Actions with separate `develop` and `main` pipelines |
 | **Database Migrations** | Alembic-managed PostgreSQL schema with full version history |
@@ -34,6 +35,7 @@ This system ingests PDF and text documents and exposes a conversational Q&A API.
 **AI / ML**
 - [OpenAI API](https://platform.openai.com/) — GPT generation + embeddings
 - [Cohere API](https://cohere.com/) — generation + embeddings with RAG-native document support
+- OCR: Tesseract (local) and AWS Textract (cloud) — optional image ingestion and text extraction
 
 **Vector Databases**
 - [Qdrant](https://qdrant.tech/) — lightweight embedded vector store
@@ -109,8 +111,8 @@ API docs available at: **http://localhost:8000/docs**
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/app/v2/data/upload/{project_id}` | Upload a PDF or TXT document |
-| `POST` | `/app/v2/data/process/{project_id}` | Chunk and store document content |
+| `POST` | `/app/v2/data/upload/{project_id}` | Upload a PDF, TXT, or image document (PNG/JPG/TIFF) |
+| `POST` | `/app/v2/data/process/{project_id}` | Chunk, OCR (if image), and store document content |
 
 ### NLP / RAG Endpoints
 
@@ -192,6 +194,7 @@ alembic downgrade -1
 │   │   └── data_contoroller.py    # File validation & storage
 │   ├── stores/
 │   │   ├── LLM/                   # OpenAI + Cohere providers
+│   │   │   └── OCR/               # OCR helpers (Tesseract / Textract)
 │   │   └── vectorDB/              # Qdrant + PgVector providers
 │   ├── models/
 │   │   ├── db_schemes/            # SQLAlchemy models + Alembic
@@ -212,4 +215,3 @@ alembic downgrade -1
 
 
 This project is licensed under the terms in the [LICENSE](./LICENSE) file.
-
