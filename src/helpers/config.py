@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     GENERATION_DEFAULT_MAX_TOKENS: int = None
     GENERATION_DEFAULT_TEMPERATURE: float = None
     
+    # ================================= OCR ============================================
+    OCR_BACKEND : str            # MISTRAL or GEMENAI
+    MISTRAL_API_KEY : str 
+    GEMENAI_API_KEY : str
+    
     # ================================= VectorDB Config ================================
     VECTOR_DB_BACKEND: str 
     VECTOR_DB_PATH: str 

@@ -27,6 +27,6 @@ fastapi-health==0.4.0
 
 # OCR
 mistralai
-google
+google-genai
 cv2-rgb
 pillow

@@ -1,13 +1,51 @@
 import base64
 import io
-from mistralai import Mistral
+import importlib
+import logging
 from PIL import Image
 from helpers.config import get_settings
+
+logger = logging.getLogger(__name__)
+
+
+def _load_mistral_class():
+    try:
+        # Preferred import if available
+        from mistralai import Mistral  # type: ignore
+
+        return Mistral
+    except Exception:
+        try:
+            pkg = importlib.import_module("mistralai")
+        except Exception:
+            return None
+
+        # Try several possible client class names used by different versions
+        for name in ("Mistral", "MistralClient", "Client"):
+            cls = getattr(pkg, name, None)
+            if cls:
+                return cls
+
+        return None
 
 
 class MistralProvider:
     def __init__(self, api_key):
-        self.client = Mistral(api_key=api_key)
+        MistralClass = _load_mistral_class()
+        if MistralClass is None:
+            logger.error("mistralai package is not available or has an unexpected API")
+            raise ImportError("mistralai client class not found; check installation and API")
+
+        # instantiate the client using common constructor patterns
+        try:
+            self.client = MistralClass(api_key=api_key)
+        except TypeError:
+            # fallback: some clients expect a dict or different kwarg name
+            try:
+                self.client = MistralClass(key=api_key)
+            except Exception as exc:
+                logger.error(f"Failed to instantiate mistralai client: {exc}")
+                raise
 
     def recognize_text(self, image: Image.Image):
         """
