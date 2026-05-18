@@ -140,10 +140,10 @@ class pdf_loader:
     def _process_page_data(
         self,
         page_num: int,
-        decoded_blocks: list | None,
-        raster: Image.Image | None,
         total_pages: int,
         pdf_meta: dict,
+        decoded_blocks: list = None,
+        raster: Image.Image = None,
     ) -> Document:
 
         content = []
