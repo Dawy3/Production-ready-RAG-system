@@ -40,7 +40,7 @@ class ProcessController(BaseController):
             return TextLoader(file_path, encoding="utf-8")
         
         if file_ext == ProcessingEnums.PDF.value:
-            return pdf_loader(file_path=file_path)
+            return PyMuPDFLoader(file_path=file_path)
         
         return None
         

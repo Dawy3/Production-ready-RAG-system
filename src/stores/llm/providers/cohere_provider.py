@@ -3,6 +3,7 @@ from stores.llm.llm_enums import CohereEnums, DocumentTypeEnum
 import cohere
 import logging
 from typing import List, Union
+import os
 
 
 
@@ -12,7 +13,8 @@ class CohereProvider(LLMInterface):
     def __init__(self, api_key: str,
                         default_input_max_char: int=1000,
                         default_generation_max_output_tokens: int=1000,
-                        default_temp: float=0.1):
+                        default_temp: float=0.1,
+                        chat_history_limit: int = None):
         self.api_key = api_key
         
         self.default_temp = default_temp
