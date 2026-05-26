@@ -9,9 +9,9 @@ class NLPController(BaseController):
     def __init__(self, vectordb_client, generation_client, embedding_client, template_parser):
         super().__init__()
         
+        self.embedding_client = embedding_client
         self.vectordb_client = vectordb_client
         self.generation_client = generation_client
-        self.embedding_client = embedding_client
         self.template_parser = template_parser
         
     
@@ -120,8 +120,8 @@ class NLPController(BaseController):
 
         chat_history = [
             self.generation_client.construct_prompt(
-                prompt= system_prompt,
                 role = self.generation_client.enums.SYSTEM.value,
+                prompt= system_prompt,
             )
         ]
         
