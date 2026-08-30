@@ -137,6 +137,32 @@ services:
       - backend
     restart: always
 
+  # RabbitMQ (Message Broker)
+  rabbitmq:
+    image: rabbitmq:4.1.2-management-alpine
+    container_name: rabbitmq
+    ports: 
+      - "5672:5672"  # AMQP(Advnaced message queue protocol) port
+      - "15672:15672" # Management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    env_file:
+      - ./env/.env.rabbitmq
+    network:
+      - backend
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      timeout: 10s
+      retries: 5
+
+  # Redis (Result backend & Cache)
+  redis:
+    image: redis:8.0.3-alpine
+    contianer_name: redis
+    ports: 
+      - "6379:6379"
     
 networks:
   backend:
@@ -148,3 +174,4 @@ volumes:
   qdrant_data:
   prometheus_data:
   grafana_data:
+  rabbitmq_data:
