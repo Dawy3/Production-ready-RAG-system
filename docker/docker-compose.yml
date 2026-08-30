@@ -149,7 +149,7 @@ services:
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     env_file:
       - ./env/.env.rabbitmq
-    network:
+    networks:
       - backend
     restart: always
     healthcheck:
@@ -160,7 +160,7 @@ services:
   # Redis (Result backend & Cache)
   redis:
     image: redis:8.0.3-alpine
-    contianer_name: redis
+    container_name: redis
     ports: 
       - "6379:6379"
     
