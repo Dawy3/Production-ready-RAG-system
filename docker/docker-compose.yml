@@ -149,11 +149,7 @@
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     env_file:
       - ./env/.env.rabbitmq
-<<<<<<< HEAD
     networks:
-=======
-    networks:
->>>>>>> 47316412d7f654d5e44edec44e1de0724aa900e7
       - backend
     restart: always
     healthcheck:
@@ -167,7 +163,6 @@
     container_name: redis
     ports: 
       - "6379:6379"
-<<<<<<< HEAD
     volumes:
       - redis_data:/data
     env_file:
@@ -180,9 +175,7 @@
       timeout: 10s
       retries: 5
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-rag_redis_2222}"]
-=======
->>>>>>> 47316412d7f654d5e44edec44e1de0724aa900e7
-    
+
 networks:
   backend:
     driver: bridge
@@ -193,9 +186,5 @@ volumes:
   qdrant_data:
   prometheus_data:
   grafana_data:
-<<<<<<< HEAD
   rabbitmq_data:
   redis_data:
-=======
-  rabbitmq_data:
->>>>>>> 47316412d7f654d5e44edec44e1de0724aa900e7
