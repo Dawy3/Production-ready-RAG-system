@@ -37,7 +37,7 @@ services:
     image: pgvector/pgvector:0.8.0-pg17
     container_name: pgvector
     ports:
-      - "5432:5432"
+      - "5400:5432"
     volumes:
       - 'pgvector:/var/lib/postgresql/data'
     env_file:
@@ -163,6 +163,18 @@ services:
     contianer_name: redis
     ports: 
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    env_file:
+      - ./env/.env.redis
+    networks:
+      - backend
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 10s
+      retries: 5
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-rag_redis_2222}"]
     
 networks:
   backend:
@@ -175,3 +187,4 @@ volumes:
   prometheus_data:
   grafana_data:
   rabbitmq_data:
+  redis_data:
