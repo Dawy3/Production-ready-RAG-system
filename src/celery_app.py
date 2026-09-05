@@ -9,7 +9,8 @@ celery_app = Celery(
     broker= settings.CELERY_BROKER_URL,
     backend= settings.CELERY_RESULT_BACKEND,
     include=[
-        "tasks.mail_service"
+        "tasks.mail_service",
+        "tasks.file_processing",
     ]
 )
 
