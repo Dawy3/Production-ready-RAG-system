@@ -35,9 +35,9 @@ class Settings(BaseSettings):
     GENERATION_DEFAULT_TEMPERATURE: float = None
     
     # ================================= OCR ============================================
-    OCR_BACKEND : str            # MISTRAL or GEMENAI
-    MISTRAL_API_KEY : str 
-    GEMENAI_API_KEY : str
+    # OCR_BACKEND : str            # MISTRAL or GEMENAI
+    # MISTRAL_API_KEY : str 
+    # GEMENAI_API_KEY : str
     
     # ================================= VectorDB Config ================================
     VECTOR_DB_BACKEND: str 
@@ -46,7 +46,15 @@ class Settings(BaseSettings):
     VECTOR_DB_PGVEC_INDEX_THRESHOLD: int = 100
     # ================================= Template Configs ================================
     PRIMARY_LANG: str
-    DEFAULT_LANG: str 
+    DEFAULT_LANG: str
+
+    # Celery configuration - Essential Settings Only
+    CELERY_BROKER_URL: str = None
+    CELERY_RESULT_BACKEND: str = None
+    CELERY_TASK_SERIALIZER: str = "json" 
+    CELERY_TASK_TIMELIMIT: int = 900
+    CELERY_TASK_ACKS_LATE: bool = True
+    CELERY_WORKER_CONCURRENCY: int = 1
 
         
     model_config = SettingsConfigDict(env_file=".env")

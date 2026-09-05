@@ -14,7 +14,7 @@ pymongo==4.5.0
 SQLAlchemy==2.0.36
 asyncpg==0.30.0
 alembic==1.14.0     # Alembic basicaly turn python code data(SQLAlchemy) to tables on the DB(PostgreSQL)
-psycopg2==2.9.10    # to run Alembic
+psycopg2-binary==2.9.10    # to run Alembic
 pgvector==0.4.0
 nltk==3.9.1
 
@@ -30,3 +30,10 @@ mistralai
 google-genai
 cv2-rgb
 pillow
+
+# Task Queue and Background processing
+celery==5.5.3
+redis==6.2.0
+kombu==5.5.4                    # Messaging between celery and RabbitMQ.
+billiard==4.2.1                 # Multi-processing -> manage worker workflow.
+vine==5.1.0                     # Promising and call-back if we're going to use async function
