@@ -30,3 +30,10 @@ mistralai
 google-genai
 cv2-rgb
 pillow
+g
+# Task Queue and Background Processing
+celery==5.5.3
+redis==6.2.0
+kombu==5.5.4        # Messaging between Celery and Broker(rabbitMQ /Redis)
+billiard==4.2.1     # Multiprocessing: manage workers Process
+vine==5.1.0         # Promising and call back: use case when use async function
