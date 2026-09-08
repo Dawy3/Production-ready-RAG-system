@@ -54,6 +54,7 @@ celery_app = Celery(
     backend= settings.CELERY_RESULT_BACKEND,
     include=[
         "tasks.file_processing",
+        "tasks.mail_service",
     ]
 )
 

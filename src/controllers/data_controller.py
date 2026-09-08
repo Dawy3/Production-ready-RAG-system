@@ -20,11 +20,11 @@ class DataController(BaseController):
         
        # Wrong file type
         if file.content_type not in self.app_settings.FILE_ALLOWED_TYPES:
-            return ResponseSignals.FILE_TYPE_NOT_SUPPORTED.value
-        
+            return False, ResponseSignals.FILE_TYPE_NOT_SUPPORTED.value
+
         # Exceeded file size
         if file.size > self.app_settings.FILE_MAX_SIZE * self.size_scale:
-            return ResponseSignals.FILE_SIZE_EXCEEDED
+            return False, ResponseSignals.FILE_SIZE_EXCEEDED.value
         
         return True, ResponseSignals.FILE_VALIDATED_SUCCESS.value
     
